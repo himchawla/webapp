@@ -45,7 +45,15 @@ export function Login() {
         }).then(res => {
             if(res.data === "success") {
                 console.log("success");
-                return navigateToHomepage();
+                // return navigateToHomepage();
+                axios.get("http://localhost:3001/user/verify?id=test").then((response) => {
+                    if (response.data.loggedIn == true) {
+                        console.log("logged in");
+                    }
+                    else {
+                        console.log("not logged in");
+                    }
+                });
             }
             else 
             {

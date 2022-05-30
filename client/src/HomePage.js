@@ -1,9 +1,15 @@
-import React, {useState} from "react";
-import {useParams} from "react-router-dom";
-import axios from "axios";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import axios, {Axios} from "axios";
+
 
 export function HomePage () {
-    const {id} = useParams();   
+
+   // let useNavigate1 = useNavigate("/Login");
+
+
+
+    const {id} = useParams();
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     

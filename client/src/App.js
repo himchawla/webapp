@@ -5,9 +5,16 @@ import {SignUp} from "./SignUp";
 import {Home} from "./Home";
 import React from "react";
 import {HomePage} from "./HomePage";
+import {Cookies} from "react-cookie";
+export const cookies = new Cookies();
+
 
 function App() {
-  return (
+
+    cookies.set('myCat', 'Pacman', { path: '/' });
+    console.log(cookies.get('myCat'));
+
+    return (
     <Router>
         <div>
         
