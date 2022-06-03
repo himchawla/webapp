@@ -54,14 +54,14 @@ const cookieDB = mysql.createConnection({
 });
 
 
-//
-app.get("/user/verify", (req, res) => {
-    if (req.session.user) {
-        res.send({ loggedIn: true, user: req.session.user });
-    } else {
-        res.send({ loggedIn: false });
-    }
-});
+// //
+// app.get("/user/verify", (req, res) => {
+//     if (req.session.user) {
+//         res.send({ loggedIn: true, user: req.session.user });
+//     } else {
+//         res.send({ loggedIn: false });
+//     }
+// });
 
 app.post("/check", (req, res) => {
     const { username } = req.body;
@@ -124,13 +124,161 @@ app.post("/create", (req, res) => {
             }
         }
     });
-}); 
+});
+
+app.post("/create/userDetails/", (req, res) => {
+    const { username, description, numOfSkills} = req.body;
+    //console.log(username, userDetails);
+    db.query(`INSERT INTO userDetails (username, description, numberOfSkills) values (?,?,?);`, [username, description, numOfSkills], (err, result) => {
+        if (err) {
+            console.log(err);
+            res.send("error");
+        }
+        else {
+            res.send("success");
+        }
+    });
+    console.log("Username:",  username, "Description:", description, "NumOfSkills:", numOfSkills);
+
+});
+
+app.post("/create/addSkill/", (req, res) => {
+    const {username, skillName, skillProficiency} = req.body;
+
+    db.query(`INSERT INTO userSkills (username, skillName, skillProficiency)
+              values (?, ?, ?);`, [username, skillName, skillProficiency], (err, result) => {
+        if (err) {
+            console.log(err);
+            res.send("error");
+        } else {
+            res.send("success");
+        }
+    })
+    console.log("Username:", username, "SkillName:", skillName, "SkillProficiency:", skillProficiency);
+
+});
+app.post("/user/auth",  (req, res) => {
+
+        const token = req.body.token;
+        const sessionToken = token;
+        cookieDB.query(`SELECT * FROM cookie_db.cookies WHERE token = '${sessionToken}'`, (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                if (result.length > 0) {
+                    res.send({ msg: "success" });
+                } else {
+                    res.send("error");
+                    //res.redirect("/login");
+                }
+            }
+        });
+});
+
+app.post("/user/logout", (req, res) => {
+    const token = req.body.token;
+    const sessionToken = token;
+    cookieDB.query(`DELETE FROM cookie_db.cookies WHERE token = '${sessionToken}'`, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send("success");
+        }
+    });
+});
+
+app.post("/user/getDescription", (req, res) => {
+    const username = req.body.username;
+    db.query(`SELECT * FROM userDetails WHERE username = '${username}'`, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            if (result.length > 0) {
+                result[0].username = username;
+                res.send(result[0]);
+            }
+            else {
+                res.send("error");
+            }
+        }
+    });
+});
+
+app.post("/user/getSpecialSkills", (req, res) => {
+    const username = req.body.username;
+    const skillId = req.body.skillId;
+    db.query(`SELECT *
+              FROM userSpecialSkills
+              WHERE username = '${username}'
+                AND skillId = '${skillId}'`, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            if (result.length >= 1) {
+                res.send(result[0]);
+            } else {
+                res.send("error");
+            }
+        }
+    });
+});
+
+app.post("/user/getProject", (req, res) => {
+    const username = req.body.username;
+    const projectId = req.body.projectId;
+    db.query(`SELECT * FROM userProjects WHERE username = '${username}' AND projectId = '${projectId}'`, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            if (result.length >= 1) {
+                res.send(result[0]);
+            } else {
+                res.send("error");
+            }
+        }
+    });
+});
+
+app.post("/user/getProjectCount", (req, res) => {
+
+    const username = req.body.username;
+    db.query(`SELECT * FROM userProjects WHERE username = '${username}'`, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+                res.send(result.length.toString());
+        }
+    });
+});
+
+app.post("/user/getAllProjectCount", (req, res) => {
+    const username = req.body.username;
+    db.query(`SELECT * FROM userProjects WHERE username != '${username}'`, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            result.count = result.length;
+            res.send(result);
+        }
+    });
+});
+
+app.post("/user/getMainProject", (req, res) => {
+    const username = req.body.username;
+    db.query(`SELECT * FROM userProjects WHERE username = '${username}' AND mainProject = 1`, (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            if (result.length >= 1) {
+                res.send(result[0]);
+            } else {
+                res.send("error");
+            }
+        }
+    });
+});
 
 
-
-
-
-//
 app.post("/login", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -161,11 +309,27 @@ app.post("/login", (req, res) => {
                             secure: false,
                             path: "/",
                         });
+                        var token = req.body.token;
+                        bcrypt.hash(token, 10, (err, hash) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log(hash);
+                                res.token = hash;
+                                cookieDB.query("INSERT INTO cookies (token) values (?);", [res.token], (err, result) => {
+                                    if (err) {
+                                        console.log(err);
+                                    } else {
+                                        console.log(result);
+                                    }
+                                });
+                                req.session.user = email;
+                                req.session.cookie.expires = new Date(Date.now() + 3600000);
+                                req.session.save();
+                                res.send({"msg":"success", "cookie": res.token});
+                            }
+                        });
 
-                        req.session.user = email;
-                        req.session.cookie.expires = new Date(Date.now() + 3600000);
-                        req.session.save();
-                        res.send("success");
                     }
                 });
             }
@@ -204,30 +368,12 @@ app.get("/user/username/:email", (req, res) => {
         });
     }
 });
-//
-//
-// app.get("/user/verify", (req, res) => {
-//
-//
-//             cookieDB.query("SELECT * FROM cookies WHERE cookie_id = ?;", [req.query.id], (err, result) => {
-//                 if (err) {
-//                     console.log(err);
-//                 } else {
-//                     if (result.length > 0) {
-//                         res.send("success");
-//                     }
-//                     else {
-//                         res.send("fail");
-//                     }
-//                 }
-//             });
-//
-// });
 
 
 app.listen(3001, () => {
   console.log("Server started on port 3001");
-  cookieDB.query("CREATE TABLE IF NOT EXISTS cookies (cookie_id INT AUTO_INCREMENT PRIMARY KEY, cookie_name VARCHAR(255), cookie_value VARCHAR(255), cookie_expiry DATETIME, cookie_path VARCHAR(255), cookie_domain VARCHAR(255), cookie_secure BOOLEAN, cookie_httponly BOOLEAN, cookie_samesite VARCHAR(255));", (err, result) => {
+  cookieDB.query("DROP TABLE IF EXISTS cookies;");
+  cookieDB.query("CREATE TABLE IF NOT EXISTS cookies (token VARCHAR(100) PRIMARY KEY);", (err, result) => {
       if(err) {
           console.log(err);
       }
