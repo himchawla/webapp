@@ -4,6 +4,7 @@ import React from "react";
 import {useState} from "react";
 import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import Cookies from "universal-cookie";
+import {MainNavbar} from "./User/MainNavbar";
 
 
 export function Login() {
@@ -78,6 +79,10 @@ export function Login() {
 
     return (
         <div className="Login">
+            <MainNavbar active={'Login'}/>
+            <br />
+            <br />
+            <br />
             <div className="App-header">
             </div>
             <div className="App-body">
@@ -86,9 +91,9 @@ export function Login() {
                     {
                         email !== ""
                             ? <input value={email} name={"mail"} type={'text'} placeholder={"Enter your email"}
-                                   onChange={(event) => setEmail(event.target.value)}/>
+                                   onChange={(event) => setEmail(event.target.value)} maxLength={100}/>
                             : <input  name={"mail"} type={'text'} placeholder={"Enter your email"}
-                            onChange={(event) => setEmail(event.target.value)}/>
+                            onChange={(event) => setEmail(event.target.value)} maxLength={100}/>
                     }
                             <label>Password:</label>
                             <input type={'password'} placeholder={'Enter your password'}

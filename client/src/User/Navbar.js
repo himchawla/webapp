@@ -15,7 +15,7 @@ export function Navbar(props) {
         <div>
             <nav className="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient">
                 <div className="container">
-                    <a className="navbar-brand logo" href="#">Brand</a>
+                    <a className="navbar-brand logo" href="#">PM</a>
                     <button data-bs-toggle="collapse" className="navbar-toggler" data-bs-target="#navbarNav">
                         <span className="visually-hidden">Toggle navigation</span>
                         <span className="navbar-toggler-icon"></span></button>
@@ -28,11 +28,11 @@ export function Navbar(props) {
                                 <a className="nav-link" id={"NavBarProjects"}
                                    href={"/" + props.username + "/projects"}>Projects</a>
                             </li>
-                            <li className="nav-item">
-                                <a className="nav-link" id={"NavBarCV"} href={"/" + props.username + "/cv" }>
-                                    CV</a></li>
-                            <li className="nav-item"><a className="nav-link" id={"NavBarContact"}
-                                                        href={"/" + props.username + "/contact"}>Contact</a></li>
+                            {/*<li className="nav-item">*/}
+                            {/*    <a className="nav-link" id={"NavBarCV"} href={"/" + props.username + "/cv" }>*/}
+                            {/*        CV</a></li>*/}
+                            {/*<li className="nav-item"><a className="nav-link" id={"NavBarContact"}*/}
+                            {/*                            href={"/" + props.username + "/contact"}>Contact</a></li>*/}
                             <li className="nav-item"><a className="nav-link" id={"NavBarLogout"}
                                                         href={"/" + props.username + "/logout"}>Logout</a></li>
                         </ul>
@@ -49,23 +49,28 @@ export function Navbar(props) {
     
 }
 
-export function Footer(props)
-{
+export function Footer(props) {
     return (
-        <footer className="page-footer">
+        <div className="footer">
             <div className="container">
-                <div className="links">
-                    <a href={"/" + props.username + "/about"}>About me</a>
-                    <a href={"/" + props.username + "/contact"}>Contact me</a>
-                    <a href={"/" + props.username + "/projects"}>Projects</a></div>
-                <div className="social-icons">
-                    <a href={"/" + props.username + "/github"}><i className="icon ion-social-github"></i></a>
-                    <a href={"/" + props.username + "/linkedin"}><i className="icon ion-social-linkedin"></i></a>
-                    {/*<a href={"/" + props.username + "/"}><i className="icon ion-social-instagram-outline"></i></a>*/}
-                    {/*<a href={"/" + props.username + "/"}><i className="icon ion-social-twitter"></i></a>*/}
-                </div>
+
+                <footer className="page-footer">
+                    <div className="container">
+                        <div className="links">
+                            <a href={"/" + props.username}>About me</a>
+                            {/*<a href={"/" + props.username + "/contact"}>Contact me</a>*/}
+                            <a href={"/" + props.username + "/projects"}>Projects</a></div>
+                        <div className="social-icons">
+                            <a href={"/" + props.username + "/github"}><i className="icon ion-social-github"></i></a>
+                            <a href={"/" + props.username + "/linkedin"}>
+                                <i className="icon ion-social-linkedin"></i></a>
+                            {/*<a href={"/" + props.username + "/"}><i className="icon ion-social-instagram-outline"></i></a>*/}
+                            {/*<a href={"/" + props.username + "/"}><i className="icon ion-social-twitter"></i></a>*/}
+                        </div>
+                    </div>
+                </footer>
             </div>
-        </footer>
+        </div>
     )
 }
 

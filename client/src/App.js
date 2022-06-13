@@ -15,10 +15,10 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 export const cookies = new Cookies();
 export const serverPath = "http://127.0.0.1:3001";
 
+
+//Main App function
 function App() {
 
-    cookies.set('myCat', 'Pacman', { path: '/' });
-    console.log(cookies.get('myCat'));
     var userName = cookies.get('username');
     if(userName === undefined) {
         userName = "";
@@ -26,22 +26,14 @@ function App() {
     return (
     <Router>
         <div>
-
-
-            
             <Routes>
-
                 <Route path="/login" element={<Login />} />;
                 <Route path="/signup" element={<SignUp />} />;
                 <Route path="/" element={<Home />} />
                 <Route exact path={"/:id/*"} element={<HomePage id={userName}/>} /> />
             </Routes>
-
-            Test
-        
         </div>
     </Router>
-
   );
    
 

@@ -5,6 +5,7 @@ import {Route, Routes} from "react-router-dom";
 import {Home} from "./Home";
 import { useNavigate } from "react-router-dom";
 import {serverPath} from "./App";
+import {MainNavbar} from "./User/MainNavbar";
 
 
 
@@ -51,7 +52,23 @@ export function SignUp() {
 
        if(signup === "signup1") {
            if (password === confirmPassword) {
-                setSignup("signup2");
+               await axios.post("http://localhost:3001/create/", {
+                   name: name,
+                   username: username,
+                   email: email,
+                   password: password
+               }).then(res => {
+                   console.log(res);
+                   if (res.data === "User already exists") {
+                       alert("User already exists, please login");
+                       window.location.href = "/login";
+                   } else {
+                       console.log("success");
+                        window.location.href = "/login?=" + username;
+                   }
+               }).catch(err => {
+                   console.log(err);
+               });
 
            } else {
                alert("Passwords do not match");
@@ -60,22 +77,7 @@ export function SignUp() {
        if(signup === "signup2")
        {
            //if(!cansubmit2())    return;
-           await axios.post("http://localhost:3001/create/", {
-               name: name,
-               username: username,
-               email: email,
-               password: password
-           }).then(res => {
-               console.log(res);
-               if (res.data === "User already exists") {
-                   alert("User already exists, please login");
-                   window.location.href = "/login";
-               } else {
-                   console.log("success");
-               }
-           }).catch(err => {
-               console.log(err);
-           });
+          
            await axios.post("http://localhost:3001/create/userDetails/", {
                 username: username,
                 description: description,
@@ -104,6 +106,10 @@ export function SignUp() {
         
         
         return (<div className="SignUp">
+            <MainNavbar active="Signup"/>
+            <br />
+            <br />
+            <br />
             <div className="App-header">
             </div>
             <div className="App-body">
@@ -111,13 +117,13 @@ export function SignUp() {
 
                     <label>Name:</label>
                     <input type={'text'} placeholder={'Enter your name'}
-                           onChange={(event) => setName(event.target.value)}/>
+                           onChange={(event) => setName(event.target.value)} maxLength={50}/>
                     <label>Email:</label>
                     <input type={'text'} placeholder={'Enter your email'}
-                           onChange={(event) => setEmail(event.target.value)}/>
+                           onChange={(event) => setEmail(event.target.value)} maxLength={100}/>
                     <label>Username:</label>
                     <input type={'text'} placeholder={'Enter your username'}
-                           onChange={(event) => setUsername(event.target.value)}
+                           onChange={(event) => setUsername(event.target.value)} maxLength={50}/>
                            onBlur={validateUserName}/>
 
                     {dupeUsername ? <p style={{color: 'red'}}>Username is unavailable</p> : null}

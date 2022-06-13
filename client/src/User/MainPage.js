@@ -68,6 +68,15 @@ export class MainPage extends React.Component {
             if (res.data !== "error") {
                 document.getElementById("mainProject").innerHTML = res.data.projectName;
                 document.getElementById("mainProjectDes").innerHTML = res.data.projectLongDescription;
+                const base64String = btoa(String.fromCharCode(...new Uint8Array(res.data.image.data)));
+                const image = "data:image/png;base64," + base64String;
+                // setProjectImage(image);
+                document.getElementById("mainProjectImage").src = image;
+
+            }
+            else
+            {
+                document.getElementById("MainProject").innerHTML = ""
             }
 
         }).catch(err => {
@@ -83,88 +92,117 @@ export class MainPage extends React.Component {
 
     render() {
 
-        
+
         // if(this.state.user !== undefined) {
         //     this.state.description = this.state.user.description;
         // }
         return (
             <div>
-                <main className="page lanidng-page">
-                    <section className="portfolio-block block-intro">
+                {/*<main className="page lanidng-page">*/}
+                {/*    <section className="portfolio-block block-intro">*/}
+                {/*        <div className="container">*/}
+                {/*            <div className="avatar">*/}
+                {/*                <img src="assets/img/avatars/avatar.jpg" alt="..."*/}
+                {/*                     className="img-fluid rounded-circle"/>*/}
+                {/*            </div>*/}
+                {/*            <div className="about-me">*/}
+                {/*                <p id={"userDescription"}>*/}
+                {/*                    {*/}
+                {/*                        ""*/}
+                {/*                    }*/}
+                {/*                </p>*/}
+                {/*                <a className="btn btn-outline-primary" role="button" href="#">Hire me</a>*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
+                {/*    </section>*/}
+                {/*    <section className="portfolio-block photography">*/}
+                {/*        <div className="container">*/}
+                {/*            <div className="row g-0">*/}
+                {/*                <div className="col-md-6 col-lg-4 item zoom-on-hover">*/}
+                {/*                    <a href="#">*/}
+                {/*                        <img className="img-fluid image" src="assets/img/nature/image5.jpg"/>*/}
+                {/*                    </a>*/}
+                {/*                </div>*/}
+                {/*                <div className="col-md-6 col-lg-4 item zoom-on-hover">*/}
+                {/*                    <a href="#">*/}
+                {/*                        <img className="img-fluid image" src="assets/img/nature/image2.jpg"/>*/}
+                {/*                    </a>*/}
+                {/*                </div>*/}
+                {/*                <div className="col-md-6 col-lg-4 item zoom-on-hover">*/}
+                {/*                    <a href="#">*/}
+                {/*                        <img className="img-fluid image" src="assets/img/tech/image4.jpg"/>*/}
+                {/*                    </a>*/}
+                {/*                </div>*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
+                {/*    </section>*/}
+                {/*    <section className="portfolio-block skills">*/}
+                {/*        <div className="container">*/}
+                {/*            <div className="heading">*/}
+                {/*                <h2>Special Skills</h2>*/}
+                {/*            </div>*/}
+                {/*            <div className="row" id={"specialSkills"}>*/}
+                {/*                <SpecialSkills username={this.state.username} skillID={0}/>*/}
+                {/*                <SpecialSkills username={this.state.username} skillID={1}/>*/}
+                {/*                <SpecialSkills username={this.state.username} skillID={2}/>*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
+                {/*    </section>*/}
+                {/*</main>*/}
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <div id={"MainProject"}>
+                    <section className="portfolio-block website gradient">
                         <div className="container">
-                            <div className="avatar">
-                                <img src="assets/img/avatars/avatar.jpg" alt="..."
-                                     className="img-fluid rounded-circle"/>
-                            </div>
-                            <div className="about-me">
-                                <p id={"userDescription"}>
-                                    {
-                                        ""
-                                    }
-                                </p>
-                                <a className="btn btn-outline-primary" role="button" href="#">Hire me</a>
-                            </div>
-                        </div>
-                    </section>
-                    <section className="portfolio-block photography">
-                        <div className="container">
-                            <div className="row g-0">
-                                <div className="col-md-6 col-lg-4 item zoom-on-hover">
-                                    <a href="#">
-                                        <img className="img-fluid image" src="assets/img/nature/image5.jpg"/>
-                                    </a>
+                            <div className="row align-items-center">
+                                <div className="col-md-12 col-lg-5 offset-lg-1 text">
+                                    <h3 id={"mainProject"}>Website Project</h3>
+                                    <p id={"mainProjectDes"}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                        Aenean eget velit ultricies,
+                                        feugiat
+                                        est sed, efr nunc, vivamus vel accumsan dui. Quisque ac dolor cursus, volutpat
+                                        nisl
+                                        vel,
+                                        porttitor eros.</p>
                                 </div>
-                                <div className="col-md-6 col-lg-4 item zoom-on-hover">
-                                    <a href="#">
-                                        <img className="img-fluid image" src="assets/img/nature/image2.jpg"/>
-                                    </a>
-                                </div>
-                                <div className="col-md-6 col-lg-4 item zoom-on-hover">
-                                    <a href="#">
-                                        <img className="img-fluid image" src="assets/img/tech/image4.jpg"/>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section className="portfolio-block skills">
-                        <div className="container">
-                            <div className="heading">
-                                <h2>Special Skills</h2>
-                            </div>
-                            <div className="row" id={"specialSkills"}>
-                                <SpecialSkills username={this.state.username} skillID={0}/>
-                                <SpecialSkills username={this.state.username} skillID={1}/>
-                                <SpecialSkills username={this.state.username} skillID={2}/>
-                            </div>
-                        </div>
-                    </section>
-                </main>
-                <section className="portfolio-block website gradient">
-                    <div className="container">
-                        <div className="row align-items-center">
-                            <div className="col-md-12 col-lg-5 offset-lg-1 text">
-                                <h3 id={"mainProject"}>Website Project</h3>
-                                <p id={"mainProjectDes"}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eget velit ultricies,
-                                    feugiat
-                                    est sed, efr nunc, vivamus vel accumsan dui. Quisque ac dolor cursus, volutpat nisl
-                                    vel,
-                                    porttitor eros.</p>
-                            </div>
-                            <div className="col-md-12 col-lg-5">
-                                <div className="portfolio-laptop-mockup">
-                                    <div className="screen">
-                                        <div className="screen-content">
-                                            <img src={"assets/img/tech/image6.png"} alt="..."
-                                                 className="img-fluid rounded-circle"/>
+                                <div className="col-md-12 col-lg-5">
+                                    <div className="portfolio-laptop-mockup">
+                                        <div className="screen">
+                                            <div className="screen-content">
+                                                <img id={'mainProjectImage'} src={"assets/img/tech/image6.png"} alt="..."
+                                                     className="img-fluid"/>
+                                            </div>
                                         </div>
+                                        <div className="keyboard"></div>
                                     </div>
-                                    <div className="keyboard"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
             </div>
         );
     }

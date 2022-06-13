@@ -1,5 +1,6 @@
 const express = require("express");
 const mysql = require("mysql");
+const fileUpload = require("express-fileupload");
 
 const app = express();
 const cors = require("cors");
@@ -37,6 +38,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(fileUpload());
 
 const db = mysql.createConnection({
     host: "127.0.0.1",
@@ -157,6 +159,7 @@ app.post("/create/addSkill/", (req, res) => {
     console.log("Username:", username, "SkillName:", skillName, "SkillProficiency:", skillProficiency);
 
 });
+
 app.post("/user/auth",  (req, res) => {
 
         const token = req.body.token;
@@ -253,7 +256,9 @@ app.post("/user/getProjectCount", (req, res) => {
 
 app.post("/user/getAllProjectCount", (req, res) => {
     const username = req.body.username;
-    db.query(`SELECT * FROM userProjects WHERE username != '${username}'`, (err, result) => {
+    //db query where username != username and publicProject = 1
+    
+    db.query(`SELECT * FROM userProjects WHERE username != '${username}'  AND publicProject = 1`, (err, result) => {
         if (err) {
             console.log(err);
         } else {
@@ -278,6 +283,176 @@ app.post("/user/getMainProject", (req, res) => {
     });
 });
 
+app.post("/user/addProject", (req, res) => {
+    const {
+        username,
+        projectName,
+        projectShortDescription,
+        projectLongDescription,
+        projectMain,
+        projectPublic,
+        // projectImage
+    } = req.body;
+    
+    const projectImage = req.files.projectImage;
+    
+    console.log(req.files.projectImage);
+
+    const mainProject = projectMain === "true" ? 1 : 0;
+    const publicProject = projectPublic === "true" ? 1 : 0;
+    //db query select all projects and arrange them by projectId
+    db.query('SELECT * FROM userProjects WHERE username = ?', [username], (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            if (result.length >= 1) {
+
+                let projectId = result[result.length - 1].projectID + 1;
+                //if the project is main project, set all other projects to not main project
+                if (mainProject === 1) {
+                    db.query(`UPDATE userProjects
+                              SET mainProject = 0
+                              WHERE username = '${username}'`, (err, result) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log("Main project updated");
+                            db.query(`INSERT INTO userProjects (username, projectID, projectName,
+                                                                projectShortDescription,
+                                                                projectLongDescription, mainProject, publicProject, image)
+                                      values (?, ?, ?, ?, ?, ?, ?, ?);`,
+                                [username, projectId, projectName, projectShortDescription, projectLongDescription, mainProject, publicProject, projectImage.data], (err, result) => {
+                                    if (err) {
+                                        console.log(err);
+                                        res.send("error");
+                                    } else {
+                                        console.log(projectImage);
+                                        res.send("success");
+                                    }
+                                });
+                        }
+                    });
+                } else {
+                    db.query(`INSERT INTO userProjects (username, projectID, projectName, projectShortDescription,
+                                                        projectLongDescription, mainProject, publicProject, image)
+                              values (?, ?, ?, ?, ?, ?, ?, ?);`,
+                        [username, projectId, projectName, projectShortDescription, projectLongDescription, mainProject, publicProject, projectImage.data], (err, result) => {
+                            if (err) {
+                                console.log(err);
+                                res.send("error");
+
+                            } else {
+                                console.log(projectImage);
+                                res.send("success");
+                            }
+                        });
+                }
+
+                // db.query('SELECT * FROM userProjects WHERE username = ? SORT_DIRECTION ', [username], (err, result) => {
+
+
+                console.log("Username:", username, "ProjectName:", projectName, "ProjectShortDescription:", projectShortDescription, "ProjectLongDescription:", projectLongDescription, "MainProject:", mainProject, "PublicProject:", publicProject);
+            }
+            else {
+                db.query(`INSERT INTO userProjects (username, projectID, projectName, projectShortDescription,
+                                                        projectLongDescription, mainProject, publicProject)
+                              values (?, ?, ?, ?, ?, ?, ?);`,
+                    [username, 0, projectName, projectShortDescription, projectLongDescription, 1, publicProject], (err, result) => {
+                        if (err) {
+                            console.log(err);
+                            res.send("error");
+                        } else {
+                            res.send("success");
+                        }
+                    });            }
+        }
+    });
+});
+
+app.post("/user/editProject", (req, res) => {
+    const {
+        username,
+        projectId,
+        projectName,
+        projectShortDescription,
+        projectLongDescription,
+        projectMain,
+        projectPublic
+    } = req.body;
+    
+    
+    const mainProject = projectMain === "true" ? 1 : 0;
+    
+    const publicProject = projectPublic === "true" ? 1 : 0;
+    
+    const projectImage = req.files != null ? req.files.projectImage : null;
+    
+    if(projectImage != null) {
+        db.query(`UPDATE userProjects
+                  SET projectName = ?,
+                      projectShortDescription = ?,
+                      projectLongDescription = ?,
+                      mainProject = ?,
+                      publicProject = ?,
+                      image = ?
+                  WHERE username = ?
+                    AND projectID = ?`,
+            [projectName, projectShortDescription, projectLongDescription, mainProject, publicProject, projectImage.data, username, projectId], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    res.send("error");
+                } else {
+                    res.send("success");
+                }
+            });
+    }
+    else {
+        db.query(`UPDATE userProjects
+                  SET projectName             = ?,
+                      projectShortDescription = ?,
+                      projectLongDescription  = ?,
+                      mainProject             = ?,
+                      publicProject           = ?
+                  WHERE username = ?
+                    AND projectID = ?`,
+            [projectName, projectShortDescription, projectLongDescription, mainProject, publicProject, username, projectId], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    res.send("error");
+                } else {
+                    res.send("success");
+                }
+            });
+    }
+});
+
+app.post("/user/deleteProject", (req, res) => {
+    const {
+        username,
+        projectId
+    } = req.body;
+    db.query(`DELETE FROM userProjects WHERE username = '${username}' AND projectID = ${projectId}`, (err, result) => {
+        if (err) {
+            console.log(err);
+            // res.send("error");
+        } else {
+            // res.send("success");
+        }
+    });
+    
+    db.query(`UPDATE userProjects
+                SET projectID = projectID - 1
+                WHERE username = '${username}'
+                    AND projectID > ${projectId}`, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.send("error");
+        } else {
+            res.send("success");
+        }
+    });
+    
+});
 
 app.post("/login", (req, res) => {
     const email = req.body.email;
